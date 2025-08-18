@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">samoprint</string>
+    <string name="title_activity_main">samoprint</string>
+    <string name="package_name">com.samoprint.app</string>
+    <string name="custom_url_scheme">com.samoprint.app</string>
+</resources>

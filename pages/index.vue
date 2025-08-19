@@ -20,7 +20,11 @@
       <hr class="my-2 border-dashed" />
 
       <!-- Items -->
-      <div v-for="(item, idx) in receipt.items" :key="idx" class="flex justify-between text-xs">
+      <div
+        v-for="(item, idx) in receipt.items"
+        :key="idx"
+        class="flex justify-between text-xs"
+      >
         <span>{{ item.name }} (x{{ item.qty }})</span>
         <span>{{ formatPrice(item.price * item.qty) }}</span>
       </div>
@@ -49,45 +53,25 @@
       <p class="text-center text-xs">Follow Our Instagram: @theparlorhills</p>
       <p class="text-center text-xs">Wifi Password: theparlor74</p>
 
-      <!-- Tombol -->
-      <button
-        @click="printReceipt"
-        class="mt-4 w-full py-2 bg-blue-600 text-white text-sm rounded"
-      >
-        🖨️ Print
-      </button>
+      <!-- Tombol Print -->
+      <PrintButton />
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import Printer from '~/utils/printer'
 import { generateReceipt } from '~/types/receipt'
-import type { Receipt } from '~/types/receipt'
+import PrintButton from '~/components/PrintButton.vue'
 
-// ambil data struk dari generator
-const receipt: Receipt = generateReceipt()
-
+// generate data struk
+const receipt = generateReceipt()
 const totalQty = receipt.items.reduce((sum, item) => sum + item.qty, 0)
 
+// format harga
 const formatPrice = (val: number) =>
-  new Intl.NumberFormat("id-ID", {
-    style: "currency",
-    currency: "IDR",
+  new Intl.NumberFormat('id-ID', {
+    style: 'currency',
+    currency: 'IDR',
     minimumFractionDigits: 0
   }).format(val)
-
-const printReceipt = async () => {
-  try {
-    await Printer.print({
-      text: JSON.stringify(receipt), // kirim full JSON
-      ip: import.meta.env.VITE_PRINTER_IP, // ambil dari env, bukan hardcode
-      port: Number(import.meta.env.VITE_PRINTER_PORT) || 9100
-    })
-    alert("Struk dikirim ke printer ✅")
-  } catch (err) {
-    console.error(err)
-    alert("Gagal print ❌")
-  }
-}
 </script>

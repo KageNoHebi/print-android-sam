@@ -1,28 +1,28 @@
 <template>
   <button
     @click="sendToPrinter"
-    class="px-4 py-2 bg-blue-600 text-white rounded-lg shadow"
+    class="px-16 py-16 bg-blue-600 text-white rounded-lg shadow"
   >
-    Print
+    PRINT
   </button>
 </template>
 
 <script setup lang="ts">
-import Printer from '~/utils/printer'
-import { generateReceipt } from '../types/receipt'
+import { generateReceipt } from '~/types/receipt'
+import { usePrinter } from '~/composables/usePrinter'
+import { useNotification } from '~/composables/useNotification'
+
+const { printReceipt } = usePrinter()
+const { success, error } = useNotification()
 
 const sendToPrinter = async () => {
-  try {
-    const receipt = generateReceipt()
-    await Printer.print({
-      text: JSON.stringify(receipt), // kirim JSON ke native
-      ip: "192.168.1.50",            // ✅ ganti dengan IP printer LAN Epson
-      port: 9100                     // default Epson ESC/POS port
-    })
-    alert("Struk dikirim ke printer ✅")
-  } catch (err) {
-    console.error(err)
-    alert("Gagal print ❌")
+  const receipt = generateReceipt()
+  const result = await printReceipt(receipt)
+
+  if (result.success) {
+    success("✅ Struk berhasil dikirim ke printer")
+  } else {
+    error("❌ Gagal print: " + (result.error || "Unknown error"))
   }
 }
 </script>
